@@ -14,12 +14,12 @@ sealed class EitherDataOrError<A : Exception , B> {
  * 2. If it succeeds, run the success case
  * 3. If it fails, run the failure case
  */
-fun <A : Exception, B> executeFailableOperation(
-    operation: () -> EitherDataOrError<A, B>,
+inline fun <reified A : Exception, B> executeFailableOperation(
+    operation: () -> B,
     onSuccess: (B) -> Unit,
     onError: (A) -> Unit
 ) =
-    when (val result = operation()) {
+    when (val result = convertToEither<A,B> { operation() }) {
         is EitherDataOrError.Error -> onError(result.left)
         is EitherDataOrError.Data -> onSuccess(result.right)
     }
