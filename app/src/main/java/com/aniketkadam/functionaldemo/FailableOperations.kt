@@ -24,7 +24,9 @@ fun <A : Exception, B> executeFailableOperation(
         is EitherDataOrError.Data -> onSuccess(result.right)
     }
 
-
+/**
+ * Converts a regular operation, which may fail, into the type operation that generates an Either
+ */
 inline fun <reified A : Exception, B> convertToEither( operation: () -> B  ) : EitherDataOrError<A,B> {
     return try{
         EitherDataOrError.Data(operation())
