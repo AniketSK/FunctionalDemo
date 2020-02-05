@@ -17,14 +17,12 @@ class SimulatingNetworkNoErrors {
                            someApi: SomeApi,
                            validation: Validation,
                            secondApi: SecondApi,
-                           database: Database,
-                           view: View) =
+                           database: Database) =
 
         someApi.getItemsFromNetwork(requestParam)
             .filter(validation::isValid)
             .map(secondApi::getSecondaryInfo)
             .map(database::insert)
-
 }
 
 interface SomeApi {
