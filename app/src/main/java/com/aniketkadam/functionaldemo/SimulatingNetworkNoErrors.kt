@@ -1,5 +1,7 @@
 package com.aniketkadam.functionaldemo
 
+import android.accounts.NetworkErrorException
+
 /**
  * Note:
  * This simulates the following:
@@ -26,6 +28,7 @@ class SimulatingNetworkNoErrors {
 }
 
 interface SomeApi {
+    @Throws(NetworkErrorException::class)
     fun getItemsFromNetwork(param : String) : List<NetworkItem>        }
 
 interface Validation {
