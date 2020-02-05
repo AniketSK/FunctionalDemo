@@ -12,8 +12,8 @@ class SimulatingNetworkHandlingErrors {
         database: Database,
         view: View
     ) {
-        executeFailableOperation(
-            operation = { convertToEither<NetworkErrorException, List<NetworkItem>> {someApi.getItemsFromNetwork(requestParam)} },
+        executeFailableOperation<NetworkErrorException, List<NetworkItem>>(
+            operation = { convertToEither { someApi.getItemsFromNetwork(requestParam) } },
             onSuccess = { data -> onSuccess(data, validation, secondApi, database) },
             onError = { error -> onError(error, view) }
         )
