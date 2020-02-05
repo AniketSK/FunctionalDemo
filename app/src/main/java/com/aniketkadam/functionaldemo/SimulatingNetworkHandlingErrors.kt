@@ -19,16 +19,6 @@ class SimulatingNetworkHandlingErrors {
         )
     }
 
-    fun <A : Exception, B> executeFailableOperation(
-        operation: () -> EitherDataOrError<A, B>,
-        onSuccess: (B) -> Unit,
-        onError: (A) -> Unit
-    ) =
-        when (val result = operation()) {
-            is EitherDataOrError.Error -> onError(result.left)
-            is EitherDataOrError.Data -> onSuccess(result.right)
-        }
-
     private fun onError(error : NetworkErrorException,
                         view : View) {
         view.showError("Error was ${error.message}")
@@ -47,11 +37,5 @@ class SimulatingNetworkHandlingErrors {
 
 interface SomeApiMaybeErrors {
     fun getItemsFromNetwork(param: String): EitherDataOrError<NetworkErrorException, List<NetworkItem>>
-}
-
-
-sealed class EitherDataOrError<A : Exception, B> {
-    data class Error<A : Exception, B>(val left: A) : EitherDataOrError<A, B>()
-    data class Data<A : Exception, B>(val right: B) : EitherDataOrError<A, B>()
 }
 
