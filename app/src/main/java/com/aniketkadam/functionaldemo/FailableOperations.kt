@@ -3,9 +3,9 @@ package com.aniketkadam.functionaldemo
 /**
  * A type that can encapsulate the result, no matter what it is
  */
-sealed class EitherDataOrError<A : Exception , B> {
-    data class Error<A : Exception, B>(val left: A) : EitherDataOrError<A, B>()
-    data class Data<A : Exception, B>(val right: B) : EitherDataOrError<A, B>()
+sealed class EitherDataOrError<E : Exception, Data> {
+    data class Error<E : Exception, Data>(val left: E) : EitherDataOrError<E, Data>()
+    data class Data<E : Exception, Data>(val right: Data) : EitherDataOrError<E, Data>()
 }
 
 /**
@@ -14,12 +14,12 @@ sealed class EitherDataOrError<A : Exception , B> {
  * 2. If it succeeds, run the success case
  * 3. If it fails, run the failure case
  */
-inline fun <reified A : Exception, B> executeFailableOperation(
-    operation: () -> B,
-    onSuccess: (B) -> Unit,
-    onError: (A) -> Unit
+inline fun <reified E : Exception, Data> executeFailableOperation(
+    operation: () -> Data,
+    onSuccess: (Data) -> Unit,
+    onError: (E) -> Unit
 ) =
-    when (val result = convertToEither<A,B> { operation() }) {
+    when (val result = convertToEither<E, Data> { operation() }) {
         is EitherDataOrError.Error -> onError(result.left)
         is EitherDataOrError.Data -> onSuccess(result.right)
     }
@@ -27,11 +27,11 @@ inline fun <reified A : Exception, B> executeFailableOperation(
 /**
  * Converts a regular operation, which may fail, into the type operation that generates an Either
  */
-inline fun <reified A : Exception, B> convertToEither( operation: () -> B  ) : EitherDataOrError<A,B> {
-    return try{
+inline fun <reified E : Exception, Data> convertToEither(operation: () -> Data): EitherDataOrError<E, Data> {
+    return try {
         EitherDataOrError.Data(operation())
-    } catch (error : Exception) {
-        if(error is A)
+    } catch (error: Exception) {
+        if (error is E)
             EitherDataOrError.Error(error)
         else
             throw error
